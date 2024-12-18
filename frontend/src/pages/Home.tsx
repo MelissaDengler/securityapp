@@ -8,9 +8,13 @@ import {
   ChatBubbleLeftRightIcon,
   XMarkIcon,
   ArrowRightIcon,
+  CameraIcon,
+  WrenchScrewdriverIcon,
 } from '@heroicons/react/24/outline';
 import SecurityHero from '../assets/security-hero.svg';
 import Pattern from '../assets/pattern.svg';
+import { ReportIssueModal } from '../components/ReportIssueModal';
+import TechnicianModal from '../components/TechnicianModal';
 
 const features = [
   {
@@ -36,12 +40,36 @@ interface ChatMessage {
   isUser: boolean;
 }
 
+const technicianCallout = {
+  standardRate: 'R550',
+  afterHoursRate: 'R850',
+  weekendRate: 'R950',
+  publicHolidayRate: 'R1200',
+  standardHours: '08:00 - 17:00 (Mon-Fri)',
+  afterHours: '17:00 - 22:00 (Mon-Fri)',
+  minimumCalloutTime: '1 hour',
+  travelCost: 'R12/km (calculated from nearest branch)',
+  response: {
+    standard: 'Within 4 hours',
+    emergency: 'Within 1 hour',
+    afterHours: 'Within 2 hours'
+  },
+  qualifications: [
+    'PSIRA registered technicians',
+    'Certified alarm system specialists',
+    'Advanced electronic security training',
+    'Criminal background checked'
+  ]
+};
+
 export default function Home() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     { id: 1, text: "Hello! How can we help you today?", isUser: false }
   ]);
   const [newMessage, setNewMessage] = useState("");
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [showTechnicianModal, setShowTechnicianModal] = useState(false);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,15 +142,35 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.8 }}
+                className="flex flex-col gap-4 max-w-md mx-auto"
               >
                 <Link
                   to="/contact"
-                  className="group inline-flex items-center px-8 py-4 rounded-full bg-red-600 text-white font-semibold 
-                           hover:bg-red-700 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-red-600/25"
+                  className="btn-primary flex items-center justify-center gap-2 px-8 py-4 w-full"
                 >
                   Get Started
-                  <ArrowRightIcon className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
+                  <ArrowRightIcon className="h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
                 </Link>
+
+                <motion.button
+                  onClick={() => setShowReportModal(true)}
+                  className="btn-primary flex items-center justify-center gap-2 px-8 py-4 w-full"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <CameraIcon className="h-5 w-5" />
+                  Report an Issue
+                </motion.button>
+
+                <motion.button
+                  onClick={() => setShowTechnicianModal(true)}
+                  className="btn-primary flex items-center justify-center gap-2 px-8 py-4 w-full"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <WrenchScrewdriverIcon className="h-5 w-5" />
+                  Request Technician
+                </motion.button>
               </motion.div>
             </motion.div>
 
@@ -358,6 +406,17 @@ export default function Home() {
           </motion.div>
         )}
       </div>
+
+      <ReportIssueModal 
+        isOpen={showReportModal} 
+        onClose={() => setShowReportModal(false)} 
+      />
+
+      <TechnicianModal 
+        isOpen={showTechnicianModal}
+        onClose={() => setShowTechnicianModal(false)}
+        techInfo={technicianCallout}
+      />
     </div>
   );
 }
